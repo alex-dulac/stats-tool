@@ -1,0 +1,53 @@
+services:
+  client:
+    image: client:${TAG:-latest}
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client/src:/app/src
+    depends_on:
+      - server
+
+  server:
+    image: server:${TAG:-latest}
+    restart: unless-stopped
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./server/.env
+    depends_on:
+      - db
+    volumes:
+      - ./server:/app/server
+
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    env_file:
+      - ./server/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    env_file:
+      - ./server/.env
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  db_data:
+  pgadmin-data:
