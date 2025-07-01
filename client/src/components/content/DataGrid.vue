@@ -2,11 +2,12 @@
 import { computed, onMounted, ref } from "vue";
 import api from "@api/apiClient.ts";
 import LoadingCircle from "@components/LoadingCircle.vue";
+import type { Stat } from "@library/models.ts";
 
 const data = ref();
 const loading = ref(true);
 
-const items = computed(() => data.value?.data || []);
+const items = computed<Stat[]>(() => data.value?.data || []);
 
 const headers = [
   { title: 'Player', key: 'playerName', width: '150px' },

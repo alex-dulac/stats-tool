@@ -6,7 +6,7 @@ const props = defineProps<{
   onChange: (season: number) => void
 }>();
 
-const selectedSeason = ref(2025);
+const selectedSeason = ref(null);
 
 const handleSeasonChange = (season: number) => {
   selectedSeason.value = season;
@@ -26,7 +26,6 @@ onMounted(() => {
         v-for="season in seasons"
         :key="season"
         class="season-chip"
-        :class="{ active: selectedSeason === season }"
         @click="handleSeasonChange(season)"
     >
       {{ season }}

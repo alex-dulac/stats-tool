@@ -20,6 +20,11 @@ async def stats(stats_service: StatsService = Depends()):
 
     return {"data": response}
 
+@router.get('/players')
+async def stats(stats_service: StatsService = Depends()):
+    data = await stats_service.get_players()
+    return {"data": data}
+
 @router.get('/stats/{player_name}')
 async def stats(player_name: str, stats_service: StatsService = Depends()):
     response = []
@@ -44,4 +49,9 @@ async def production_chart(season: int = None, stats_service: StatsService = Dep
 @router.get('/charts/shooting-efficiency')
 async def shooting_efficiency(season: int = None, stats_service: StatsService = Depends()):
     data = await stats_service.get_shooting_efficiency_chart_data(season)
+    return {"data": data}
+
+@router.get('/charts/per-game-consistency')
+async def shooting_efficiency(season: int = None, stats_service: StatsService = Depends()):
+    data = await stats_service.get_per_game_consistency_chart_data(season)
     return {"data": data}

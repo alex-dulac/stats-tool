@@ -3,11 +3,12 @@
 
 import { computed, onMounted, ref } from "vue";
 import apiClient from "@api/apiClient.ts";
+import type { Stat } from "@library/models.ts";
 
 const data = ref();
 const loading = ref(true);
 
-const items = computed(() => data.value?.data || []);
+const items = computed<Stat[]>(() => data.value?.data || []);
 
 const fetchDataAndRefreshChart = async (season: number | null) => {
   loading.value = true
