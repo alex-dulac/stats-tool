@@ -6,6 +6,7 @@ import LoadingCircle from "@components/LoadingCircle.vue";
 import SeasonFilter from "@components/content/SeasonFilter.vue";
 import { useSessionStore } from "@library/store.ts";
 import type { Stat } from "@library/models.ts";
+import { secondsToMinuteSeconds } from "@library/utils.ts";
 
 const sessionStore = useSessionStore();
 const data = ref();
@@ -44,7 +45,7 @@ const fetchDataAndRefreshPlot = async (season: number) => {
         fill: "team",
         r: 6,
         opacity: 0.8,
-        title: d => `${d.playerName} (${d.team})\nTOI/Game: ${d.toiPerGame} sec\nPoints/Game: ${d.pointsPerGame}`,
+        title: d => `${d.playerName} (${d.team})\nTOI/Game: ${secondsToMinuteSeconds(d.toiPerGame)}\nPoints/Game: ${d.pointsPerGame}`,
         tip: {
           fill: sessionStore.getTheme === 'dark' ? "#333" : "#fff",
           textColor: sessionStore.getTheme === 'dark' ? "#fff" : "#000"

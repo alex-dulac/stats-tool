@@ -20,6 +20,13 @@ A full stack web application utilizing several tools to provide users with an ea
    - Run: `cp .env.example .env`
 3. In the project root, run `docker compose up` (use `-d` to run in background)
 
+Note:
+   - To rebuild the client after adding new npm packages, run:
+     - `docker compose build client && docker compose up`
+   - To rebuild the server after adding new python packages, run:
+     - `docker compose build server && docker compose up`
+
+
 ### Access points:
 - Web app: `http://localhost:5173/`
 - FastAPI docs: `http://localhost:8000/docs`
