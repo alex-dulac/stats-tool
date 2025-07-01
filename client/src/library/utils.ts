@@ -21,3 +21,10 @@ export const mapKeysToCamelCase = <T extends Record<string, any>>(obj: T): T => 
 };
 
 export const seasons = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
+
+export const secondsToMinuteSeconds = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+	const secondsRemaining = Math.floor(seconds % 60);
+
+    return `${minutes.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`;
+}

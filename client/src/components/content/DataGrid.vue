@@ -3,11 +3,21 @@ import { computed, onMounted, ref } from "vue";
 import api from "@api/apiClient.ts";
 import LoadingCircle from "@components/LoadingCircle.vue";
 import type { Stat } from "@library/models.ts";
+import { secondsToMinuteSeconds } from "@library/utils.ts";
 
 const data = ref();
 const loading = ref(true);
 
-const items = computed<Stat[]>(() => data.value?.data || []);
+const items = computed<Stat[]>(() => {
+  if (!data.value) return [];
+  const rawItems = data.value?.data || [];
+
+  return rawItems.map(item => ({
+    ...item,
+    toi: secondsToMinuteSeconds(item.toi),
+    toiPerGame: secondsToMinuteSeconds(item.toiPerGame)
+  }));
+});
 
 const headers = [
   { title: 'Player', key: 'playerName', width: '150px' },

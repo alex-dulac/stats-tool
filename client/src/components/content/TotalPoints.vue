@@ -12,7 +12,7 @@ const data = ref();
 const loading = ref(true);
 const chartContainer = ref<HTMLDivElement>();
 
-const items = computed<Stat[]>(() => {
+const items = computed<[]>(() => {
   return data.value?.data?.flatMap((d: Stat) => [
     {
       playerName: d.playerName,
@@ -46,13 +46,13 @@ const fetchDataAndRefreshPlot = async (season: number) => {
     width: 1200,
     height: 800,
     margin: 40,
-    x: { label: "Player (Team)", tickRotate: 30 },
+    x: { label: "Player", tickRotate: 30 },
     y: { label: "Total Points", grid: true },
     fx: { label: "Season" },
     color: { legend: true },
     marks: [
       Plot.barY(items.value, {
-        x: "playerTeam",
+        x: "playerName",
         y: "value",
         fill: "stat",
         fx: "season",
