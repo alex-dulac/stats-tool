@@ -19,9 +19,12 @@ A full stack web application utilizing several tools to provide users with an ea
 2. In both the `client` & `server` directories, you will need to create an `.env` file.
    - Run: `cp .env.example .env`
 3. In the project root, run `docker compose up` (use `-d` to run in background)
-4. NOTE:
-   - Run: `docker compose up --build client` to start all and rebuild the `client`. Useful when adding new npm packages.
-   - Run: `docker compose up --build server` to start all and rebuild the `server`. Useful when adding new python packages.
+
+Note:
+   - To rebuild the client after adding new npm packages, run:
+     - `docker compose build client && docker compose up`
+   - To rebuild the server after adding new python packages, run:
+     - `docker compose build server && docker compose up`
 
 
 ### Access points:
