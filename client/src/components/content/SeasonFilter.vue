@@ -21,10 +21,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-chip-group class="season-filter" filter>
+  <v-chip-group class="season-filter" filter v-model="selectedSeason">
     <v-chip
         v-for="season in seasons"
         :key="season"
+        :value="season"
         class="season-chip"
         @click="handleSeasonChange(season)"
     >
