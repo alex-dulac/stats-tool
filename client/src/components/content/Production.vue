@@ -4,11 +4,14 @@ import apiClient from "@api/apiClient.ts";
 import * as Plot from "@observablehq/plot";
 import LoadingCircle from "@components/LoadingCircle.vue";
 import SeasonFilter from "@components/content/SeasonFilter.vue";
+import { useSessionStore } from "@library/store.ts";
+import type { Stat } from "@library/models.ts";
 
+const sessionStore = useSessionStore();
 const data = ref();
 const loading = ref(true);
-const chartContainer = ref(null);
-const items = computed(() => data.value?.data || [])
+const chartContainer = ref<HTMLDivElement>();
+const items = computed<Stat[]>(() => data.value?.data || [])
 
 const fetchDataAndRefreshPlot = async (season: number) => {
   loading.value = true
@@ -41,7 +44,11 @@ const fetchDataAndRefreshPlot = async (season: number) => {
         fill: "team",
         r: 6,
         opacity: 0.8,
-        title: d => `${d.playerName} (${d.team})\nTOI/Game: ${d.toiPerGame} sec\nPoints/Game: ${d.pointsPerGame}`
+        title: d => `${d.playerName} (${d.team})\nTOI/Game: ${d.toiPerGame} sec\nPoints/Game: ${d.pointsPerGame}`,
+        tip: {
+          fill: sessionStore.getTheme === 'dark' ? "#333" : "#fff",
+          textColor: sessionStore.getTheme === 'dark' ? "#fff" : "#000"
+        }
       }),
       Plot.frame()
     ]
@@ -57,23 +64,7 @@ const fetchDataAndRefreshPlot = async (season: number) => {
   <div class="chart-container">
     <SeasonFilter :onChange="fetchDataAndRefreshPlot" />
     <LoadingCircle v-if="loading" />
-    <div ref="chartContainer" class="chart"></div>
+    <div ref="chartContainer" class="chart" />
   </div>
 </template>
 
-<style scoped>
-.chart-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
-
-.chart {
-  width: 100%;
-  min-height: 800px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-</style>
