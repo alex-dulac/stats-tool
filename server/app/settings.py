@@ -12,5 +12,5 @@ DB_USER = os.getenv("DB_USER", "postgres")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
 
 # Frontend
-WEB_APP_URL = os.getenv('WEB_APP_URL')
+WEB_APP_URL = os.getenv('WEB_APP_URL', "http://localhost:5173")
 

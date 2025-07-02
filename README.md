@@ -16,8 +16,9 @@ A full stack web application utilizing several tools to provide users with an ea
 ### Quick start:
 
 1. Install Docker locally.
-2. In both the `client` & `server` directories, you will need to create an `.env` file.
-   - Run: `cp .env.example .env`
+2. In both the `client` & `server` directories, you will need to create an `.env` file from the example.
+  - `cd client && cp .env.example .env && cd ..`
+  - `cd server && cp .env.example .env && cd ..`
 3. In the project root, run `docker compose up` (use `-d` to run in background)
 
 Note:
