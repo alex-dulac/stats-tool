@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./server:/app/server
+      - ./server:/app
 
   db:
     image: postgres:17

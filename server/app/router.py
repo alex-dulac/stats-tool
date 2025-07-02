@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from server.app.models import stat_to_extended_model
-from server.app.service import StatsService
+from app.models import stat_to_extended_model
+from app.service import StatsService
 
 router = APIRouter()
 

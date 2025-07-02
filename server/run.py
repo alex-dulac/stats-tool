@@ -4,9 +4,9 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from server.app import settings
-from server.app.router import router
-from server.app.db import session_manager
+from app import settings
+from app.router import router
+from app.db import session_manager
 
 
 @asynccontextmanager
@@ -29,5 +29,5 @@ app.include_router(router)
 
 
 if __name__ == "__main__":
-    uvicorn.run(app="server.run:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app="run:app", host="0.0.0.0", port=8000, reload=True)
 

@@ -21,11 +21,15 @@ A full stack web application utilizing several tools to provide users with an ea
   - `cd server && cp .env.example .env && cd ..`
 3. In the project root, run `docker compose up` (use `-d` to run in background)
 
-Note:
+#### Note:
    - To rebuild the client after adding new npm packages, run:
      - `docker compose build client && docker compose up`
    - To rebuild the server after adding new python packages, run:
      - `docker compose build server && docker compose up`
+
+### Local Node Development
+  - To run the client app without Docker, comment out the `client` service in `docker-compose.yml` and run the following commands:
+    - `cd client`, `npm install`, `npm run dev`
 
 
 ### Access points:

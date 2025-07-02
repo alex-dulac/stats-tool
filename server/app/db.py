@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlmodel import SQLModel, select, func
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from server.app import settings
+from app import settings
 
 # Models to register with SQLModel.metadata
-from server.app.models import Stats
+from app.models import Stats
 
 
 class SessionManager:

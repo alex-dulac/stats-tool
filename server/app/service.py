@@ -2,8 +2,8 @@ from fastapi import Depends
 from sqlmodel import select, distinct
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from server.app.db import get_db
-from server.app.models import Stats
+from app.db import get_db
+from app.models import Stats
 
 
 class BaseService:
