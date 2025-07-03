@@ -55,3 +55,8 @@ async def shooting_efficiency(season: int = None, stats_service: StatsService = 
 async def shooting_efficiency(season: int = None, stats_service: StatsService = Depends()):
     data = await stats_service.get_per_game_consistency_chart_data(season)
     return {"data": data}
+
+@router.get('/charts/scouting-heatmap')
+async def scouting_heatmap(stats_service: StatsService = Depends()):
+    data = await stats_service.get_scouting_heatmap_chart_data()
+    return {"data": data}

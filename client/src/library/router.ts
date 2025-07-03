@@ -21,7 +21,7 @@ const routes = [
 	{
 		path: '/heatmap',
 		name: 'heatmap',
-		component: () => import('@components/content/Heatmap.vue'),
+		component: () => import('@components/content/ScoutingHeatmap.vue'),
 	},
 	{
 		path: '/per-game-consistency',
@@ -37,6 +37,11 @@ const routes = [
 		path: '/production',
 		name: 'production',
 		component: () => import('@components/content/Production.vue'),
+	},
+	{
+		path: '/scouting-heatmap',
+		name: 'scouting-heatmap',
+		component: () => import('@components/content/ScoutingHeatmap.vue'),
 	},
 	{
 		path: '/profile',

@@ -2,13 +2,12 @@
 import { computed, onMounted, ref } from "vue";
 import api from "@api/apiClient.ts";
 import LoadingCircle from "@components/LoadingCircle.vue";
-import type { Stat } from "@library/models.ts";
 import { secondsToMinuteSeconds } from "@library/utils.ts";
 
 const data = ref();
 const loading = ref(true);
 
-const items = computed<Stat[]>(() => {
+const items = computed(() => {
   if (!data.value) return [];
   const rawItems = data.value?.data || [];
 

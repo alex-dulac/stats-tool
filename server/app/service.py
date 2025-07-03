@@ -1,4 +1,5 @@
 from fastapi import Depends
+from sqlalchemy import func
 from sqlmodel import select, distinct
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -161,4 +162,23 @@ class StatsService(BaseService):
             for row in result.all()
         ]
 
+        return data
+
+    async def get_scouting_heatmap_chart_data(self):
+        query = select(
+            Stats.season,
+            Stats.scouting_grade,
+            func.avg(Stats.points).label("average_points")
+        ).group_by(Stats.season, Stats.scouting_grade)
+
+        result = await self.db.exec(query)
+
+        data = [
+            {
+                "season": row[0],
+                "scouting_grade": row[1],
+                "average_points": round(row[2], 2) if row[2] is not None else 0
+            }
+            for row in result.all()
+        ]
         return data

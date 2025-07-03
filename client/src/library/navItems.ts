@@ -12,10 +12,9 @@ export const totalPoints: NavItem = {
 	icon: 'mdi-chart-bar'
 };
 
-// tbd
-export const heatmap: NavItem = {
-	displayName: 'Heatmap',
-	route: 'heatmap',
+export const scoutingHeatmap: NavItem = {
+	displayName: 'Scouting Heatmap',
+	route: 'scouting-heatmap',
 	icon: 'mdi-fire-circle'
 };
 
@@ -55,5 +54,6 @@ export const mainNavItems = ref<NavItem[]>([
 	production,
 	shootingEfficiency,
 	perGameConsistency,
+	scoutingHeatmap,
 ]);
 

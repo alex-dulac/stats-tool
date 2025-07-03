@@ -6,13 +6,12 @@ import * as d3 from "d3";
 import { useSessionStore } from "@library/store.ts";
 import SeasonFilter from "@components/content/SeasonFilter.vue";
 import LoadingCircle from "@components/LoadingCircle.vue";
-import type { Stat } from "@library/models.ts";
 
 const sessionStore = useSessionStore();
 const data = ref();
 const loading = ref(true);
-const chartContainer = ref<HTMLDivElement>();
-const items = computed<Stat[]>(() => data.value?.data || []);
+const chartContainer = ref();
+const items = computed(() => data.value?.data || []);
 
 const fetchDataAndRefreshPlot = async (season: number) => {
   loading.value = true;
@@ -34,7 +33,7 @@ const refreshRadarChart = () => {
     maxValues[metric] = Math.max(...items.value.map((d: any) => d[metric] || 0));
   });
 
-  const points = items.value.flatMap((player: Stat) =>
+  const points = items.value.flatMap((player: any) =>
       metrics.map(metric => ({
         name: player.playerName,
         team: player.team,
@@ -64,7 +63,7 @@ const refreshRadarChart = () => {
       domain: d3.geoCircle().center([0, 90]).radius(1.125)() // large radius for labels
     },
     marks: [
-      // Background concentric circles
+      // grey discs
       Plot.geo([1.0, 0.8, 0.6, 0.4, 0.2], {
         geometry: (r) => d3.geoCircle().center([0, 90]).radius(r)(),
         stroke: sessionStore.getTheme === 'dark' ? "#555" : "#ddd",
@@ -74,10 +73,10 @@ const refreshRadarChart = () => {
         strokeWidth: 1
       }),
 
-      // Axis lines from center to edge
+      // axis lines
       Plot.link(longitude.domain(), {
         x1: longitude,
-        y1: 90 - 1.07, // Extend beyond 100% for labels
+        y1: 90 - 1.07,
         x2: 0,
         y2: 90,
         stroke: sessionStore.getTheme === 'dark' ? "#666" : "#ccc",
@@ -85,7 +84,7 @@ const refreshRadarChart = () => {
         strokeWidth: 1.5
       }),
 
-      // Percentage labels on circles
+      // tick labels
       Plot.text([0.2, 0.4, 0.6, 0.8, 1.0], {
         x: 180,
         y: (d) => 90 - d,
@@ -112,7 +111,7 @@ const refreshRadarChart = () => {
         lineWidth: 8
       }),
 
-      // Player radar areas
+      // player areas
       Plot.area(points, {
         x1: ({ key }) => longitude(key),
         y1: ({ value }) => 90 - value,
@@ -126,7 +125,7 @@ const refreshRadarChart = () => {
         curve: "cardinal-closed"
       }),
 
-      // Data points
+      // data points
       Plot.dot(points, {
         x: ({ key }) => longitude(key),
         y: ({ value }) => 90 - value,
@@ -140,32 +139,13 @@ const refreshRadarChart = () => {
           textColor: sessionStore.getTheme === 'dark' ? "#fff" : "#000"
         }
       }),
-
-      // Interactive value labels on hover
-      Plot.text(
-          points,
-          Plot.pointer({
-            x: ({ key }) => longitude(key),
-            y: ({ value }) => 90 - value,
-            text: (d) => `${d.rawValue.toFixed(1)}`,
-            textAnchor: "start",
-            dx: 6,
-            dy: -6,
-            fill: sessionStore.getTheme === 'dark' ? "#fff" : "#000",
-            stroke: sessionStore.getTheme === 'dark' ? "#000" : "#fff",
-            strokeWidth: 2,
-            fontSize: 11,
-            fontWeight: "bold",
-            maxRadius: 15
-          })
-      ),
     ]
   });
 
   chartContainer.value.innerHTML = '';
   chartContainer.value.appendChild(plot);
 
-  // Add CSS styles for hover effects
+  // Hover fills being handled a little differently than the linked example
   const fillOpacity = sessionStore.getTheme === 'dark' ? '0.1' : '0.15';
   const hoverOpacity = sessionStore.getTheme === 'dark' ? '0.25' : '0.3';
   const fadeOpacity = sessionStore.getTheme === 'dark' ? '0.05' : '0.08';

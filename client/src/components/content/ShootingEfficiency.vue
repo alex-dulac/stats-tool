@@ -8,13 +8,12 @@ import * as Plot from "@observablehq/plot";
 import LoadingCircle from "@components/LoadingCircle.vue";
 import SeasonFilter from "@components/content/SeasonFilter.vue";
 import { useSessionStore } from "@library/store.ts";
-import type { Stat } from "@library/models.ts";
 
 const sessionStore = useSessionStore();
 const data = ref();
 const loading = ref(true);
-const chartContainer = ref<HTMLDivElement>();
-const items = computed<Stat[]>(() => data.value?.data || [])
+const chartContainer = ref();
+const items = computed(() => data.value?.data || [])
 
 const fetchDataAndRefreshPlot = async (season: number) => {
   loading.value = true
@@ -45,7 +44,7 @@ const fetchDataAndRefreshPlot = async (season: number) => {
         x: "shots",
         y: "shootingEfficiency",
         fill: "team",
-        r: d => Math.sqrt(d.goals) * 3, // Size based on goals scored
+        r: 6,
         opacity: 0.8,
         title: d => `${d.playerName} (${d.team})\nShots: ${d.shots}\nGoals: ${d.goals}\nEfficiency: ${(d.shootingEfficiency * 100).toFixed(1)}%`,
         tip: {

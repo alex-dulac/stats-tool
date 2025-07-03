@@ -5,14 +5,13 @@ import * as Plot from "@observablehq/plot";
 import LoadingCircle from "@components/LoadingCircle.vue";
 import SeasonFilter from "@components/content/SeasonFilter.vue";
 import { useSessionStore } from "@library/store.ts";
-import type { Stat } from "@library/models.ts";
 import { secondsToMinuteSeconds } from "@library/utils.ts";
 
 const sessionStore = useSessionStore();
 const data = ref();
 const loading = ref(true);
-const chartContainer = ref<HTMLDivElement>();
-const items = computed<Stat[]>(() => data.value?.data || [])
+const chartContainer = ref();
+const items = computed(() => data.value?.data || [])
 
 const fetchDataAndRefreshPlot = async (season: number) => {
   loading.value = true

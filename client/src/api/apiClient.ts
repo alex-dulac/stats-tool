@@ -57,5 +57,8 @@ export default {
 	getPerGameConsistency: async (season: number | null = null) => {
 		const config = season ? { params: { season } } : undefined;
 		return handleApiResponse(apiClient.get('/charts/per-game-consistency', config));
-	}
+	},
+	getScoutingHeatmap: async () => {
+		return handleApiResponse(apiClient.get('/charts/scouting-heatmap'));
+	},
 };
