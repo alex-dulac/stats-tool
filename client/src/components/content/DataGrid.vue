@@ -19,8 +19,8 @@ const items = computed(() => {
 });
 
 const headers = [
-  { title: 'Player', key: 'playerName', width: '150px' },
-  { title: 'Team', key: 'team', width: '150px' },
+  { title: 'Player', key: 'playerName', width: '200px' },
+  { title: 'Team', key: 'team', },
   { title: 'Season', key: 'season' },
   { title: 'GP', key: 'gp' },
   { title: 'TOI', key: 'toi' },

@@ -10,7 +10,7 @@ import type { Stat } from "@library/models.ts";
 const sessionStore = useSessionStore();
 const data = ref();
 const loading = ref(true);
-const chartContainer = ref<HTMLDivElement>();
+const chartContainer = ref();
 
 const items = computed<[]>(() => {
   return data.value?.data?.flatMap((d: Stat) => [
@@ -48,7 +48,7 @@ const fetchDataAndRefreshPlot = async (season: number) => {
     margin: 40,
     x: { label: "Player", tickRotate: 30 },
     y: { label: "Total Points", grid: true },
-    fx: { label: "Season" },
+    fx: { label: "Season", tickFormat: "d" },
     color: { legend: true },
     marks: [
       Plot.barY(items.value, {

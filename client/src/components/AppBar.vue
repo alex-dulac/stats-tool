@@ -2,6 +2,7 @@
 import { useSessionStore } from "@library/store.ts";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { mainNavItems } from "@library/navItems.ts";
 
 const route = useRoute();
 const session = useSessionStore();
@@ -11,16 +12,13 @@ const welcome = computed(() => {
 });
 
 const pageTitle = computed(() => {
-  const titleMap: Record<string, string> = {
-    'table': 'Data Grid',
-    'points': 'Total Points',
-    'heatmap': 'Heatmap',
-    'per-game-consistency': 'Per Game Consistency',
-    'shooting-efficiency': 'Shooting Efficiency',
-    'production': 'Production',
-  };
+  const currentItem = mainNavItems.value.find(item => item.route === route.name);
+  return currentItem?.displayName || '';
+});
 
-  return titleMap[route.name as string] || '';
+const chartDescription = computed(() => {
+  const currentItem = mainNavItems.value.find(item => item.route === route.name);
+  return currentItem?.description || '';
 });
 </script>
 
@@ -32,6 +30,17 @@ const pageTitle = computed(() => {
 
     <v-row justify="center" align="center" class="flex-grow-0">
       <h4>{{ pageTitle }}</h4>
+
+      <v-tooltip v-if="pageTitle" location="right">
+        <template v-slot:activator="{ props }">
+          <v-btn icon v-bind="props">
+            <v-icon>
+              mdi-information-outline
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ chartDescription }}</span>
+      </v-tooltip>
     </v-row>
 
     <template #append>

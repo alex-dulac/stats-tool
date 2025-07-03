@@ -23,8 +23,8 @@ const fetchDataAndRefreshPlot = async () => {
   const plot = Plot.plot({
     // There is probably a better way to display this data in a more meaningful way to the user,
     // But this seems like an okay starting point for now
-    width: 1000,
-    height: 1000,
+    width: 900,
+    height: 900,
     margin: 60,
     x: {
       label: "Season",
@@ -34,7 +34,8 @@ const fetchDataAndRefreshPlot = async () => {
     },
     y: {
       label: "Scouting Grade",
-      domain: [1, 10],
+      tickFormat: "d",
+      ticks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       grid: true
     },
     color: {

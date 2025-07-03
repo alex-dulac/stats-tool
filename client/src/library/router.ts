@@ -7,7 +7,7 @@ const routes = [
 	},
 	{
 		path: '/table',
-		name: 'table',
+		name: 'data-grid',
 		component: () => import('@components/content/DataGrid.vue'),
 		meta: {
 			requiresAuth: false, //note: set all routes to true if we had a login system, but we don't!
@@ -15,13 +15,8 @@ const routes = [
 	},
 	{
 		path: '/total-points',
-		name: 'points',
+		name: 'total-points',
 		component: () => import('@components/content/TotalPoints.vue'),
-	},
-	{
-		path: '/heatmap',
-		name: 'heatmap',
-		component: () => import('@components/content/ScoutingHeatmap.vue'),
 	},
 	{
 		path: '/per-game-consistency',
