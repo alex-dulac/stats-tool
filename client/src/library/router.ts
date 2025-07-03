@@ -3,12 +3,12 @@ import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
 	{
 		path: '/',
-		redirect: '/table'
+		redirect: '/data-table'
 	},
 	{
-		path: '/table',
-		name: 'data-grid',
-		component: () => import('@components/content/DataGrid.vue'),
+		path: '/data-table',
+		name: 'data-table',
+		component: () => import('@components/content/DataTable.vue'),
 		meta: {
 			requiresAuth: false, //note: set all routes to true if we had a login system, but we don't!
 		},

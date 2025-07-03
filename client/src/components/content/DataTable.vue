@@ -7,16 +7,7 @@ import { secondsToMinuteSeconds } from "@library/utils.ts";
 const data = ref();
 const loading = ref(true);
 
-const items = computed(() => {
-  if (!data.value) return [];
-  const rawItems = data.value?.data || [];
-
-  return rawItems.map(item => ({
-    ...item,
-    toi: secondsToMinuteSeconds(item.toi),
-    toiPerGame: secondsToMinuteSeconds(item.toiPerGame)
-  }));
-});
+const items = computed(() => data.value?.data || []);
 
 const headers = [
   { title: 'Player', key: 'playerName', width: '200px' },
@@ -61,7 +52,18 @@ onMounted(() => {
           :loading="loading"
           class="elevation-3"
           fixed-header
-      />
+      >
+        <!--
+          Behind the scenes, toi is sorted by seconds,
+          but it should display as "MM:SS" in the table.
+        -->
+        <template v-slot:item.toi="{ item }">
+          {{ secondsToMinuteSeconds(item.toi) }}
+        </template>
+        <template v-slot:item.toiPerGame="{ item }">
+          {{ secondsToMinuteSeconds(item.toiPerGame) }}
+        </template>
+      </v-data-table>
     </div>
 </template>
 

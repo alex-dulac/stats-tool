@@ -42,11 +42,11 @@ export const production: NavItem = {
 	description: 'View Points per game compared to TOI per game for each player in a specific season.'
 };
 
-export const dataGrid: NavItem = {
-	route: 'data-grid',
-	displayName: 'Data Grid',
+export const dataTable: NavItem = {
+	route: 'data-table',
+	displayName: 'Data Table',
 	icon: 'mdi-table',
-	description: 'A grid of raw player statistics.'
+	description: 'A table of player statistics by season.'
 };
 
 export const profile: NavItem = {
@@ -57,7 +57,7 @@ export const profile: NavItem = {
 };
 
 export const mainNavItems = ref<NavItem[]>([
-	dataGrid,
+	dataTable,
 	totalPoints,
 	production,
 	shootingEfficiency,
