@@ -6,6 +6,7 @@ import { secondsToMinuteSeconds } from "@library/utils.ts";
 
 const data = ref();
 const loading = ref(true);
+const search = ref('')
 
 const items = computed(() => data.value?.data || []);
 
@@ -45,13 +46,25 @@ onMounted(() => {
     <div>
       <LoadingCircle v-if="loading" />
 
-      <v-data-table
+      <v-text-field
           v-else
+          v-model="search"
+          label="Search by player or team"
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          hide-details
+          single-line
+      ></v-text-field>
+
+      <v-data-table
           :items="items"
           :headers="headers"
           :loading="loading"
+          v-model:search="search"
+          :filter-keys="['playerName', 'team']"
           class="elevation-3"
           fixed-header
+          multi-sort
       >
         <!--
           Behind the scenes, toi is sorted by seconds,
