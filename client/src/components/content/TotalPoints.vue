@@ -83,5 +83,6 @@ watch(items, () => {
       :onChange="fetchData"
       :plot="plot"
       :showFilters="true"
+      :chartType="'totalPoints'"
   />
 </template>

@@ -57,6 +57,5 @@ export const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 	// here we could check if the user is authenticated before allowing navigation
-	console.log('before each route', to, from);
 	next();
 });

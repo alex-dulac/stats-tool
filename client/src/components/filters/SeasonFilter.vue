@@ -1,22 +1,28 @@
 <script setup lang="ts">
 import { seasons } from "@library/utils.js";
 import { onMounted, ref } from "vue";
+import type { FilterableChartType } from "@components/BaseChart.vue";
+import { useFiltersStore } from "@library/store.ts";
+import type { FilterParams } from "@api/apiClient.ts";
 
 const props = defineProps<{
-  onChange: (season: number) => void
+  onChange: (updatedFilters: FilterParams) => void;
+  chartType: FilterableChartType;
 }>();
 
+const filtersStore = useFiltersStore();
 const selectedSeason = ref();
 
-const handleSeasonChange = (season: number) => {
+const handleSeasonChange = (season: number | null) => {
+  const currentFilters = filtersStore.getFilters(props.chartType);
+  const updatedFilters = { ...currentFilters, season };
+  filtersStore.setFilters(props.chartType, updatedFilters);
   selectedSeason.value = season;
-  props.onChange(season);
+  props.onChange(updatedFilters);
 }
 
 onMounted(() => {
-  const initialSeason = 2025;
-  selectedSeason.value = initialSeason;
-  props.onChange(initialSeason);
+  selectedSeason.value = filtersStore.getFilters(props.chartType).season;
 });
 </script>
 

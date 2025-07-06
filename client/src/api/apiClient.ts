@@ -3,7 +3,7 @@ import { mapKeysToCamelCase } from "@library/utils.ts";
 
 export interface FilterParams {
 	season: number | null;
-	players: string[];
+	players: string | null;
 }
 
 interface Response<T> {

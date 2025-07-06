@@ -122,7 +122,7 @@ class StatsService(BaseService):
                 "season": row[2],
                 "goals": row[3],
                 "shots": row[4],
-                "shooting_efficiency": round(row[5], 2) if row[5] is not None else 0,
+                "shooting_efficiency": round(row[5], 4) if row[5] is not None else 0,
             }
             for row in result.all()
         ]

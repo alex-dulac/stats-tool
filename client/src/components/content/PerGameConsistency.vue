@@ -181,5 +181,6 @@ watch(items, () => {
       :plot="plot"
       :showFilters="true"
       :additionalStyle="getHoverStyle()"
+      :chartType="'perGameConsistency'"
   />
 </template>

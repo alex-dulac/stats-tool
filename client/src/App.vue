@@ -10,10 +10,10 @@ const session = useSettingsStore();
 const theme = useTheme();
 
 onMounted(() => {
-  theme.global.name.value = session.getTheme;
+  theme.change(session.getTheme);
 });
 
-watch(() => session.getTheme, (newTheme: string) => theme.global.name.value = newTheme);
+watch(() => session.getTheme, (newTheme: string) => theme.change(newTheme));
 </script>
 
 <template>

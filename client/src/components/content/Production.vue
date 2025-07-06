@@ -70,6 +70,7 @@ watch(items, () => {
       :onChange="fetchData"
       :plot="plot"
       :showFilters="true"
+      :chartType="'production'"
   />
 </template>
 

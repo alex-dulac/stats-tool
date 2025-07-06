@@ -1,33 +1,27 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref, watch} from "vue";
 import LoadingCircle from "@components/LoadingCircle.vue";
 import SeasonFilter from "@components/filters/SeasonFilter.vue";
 import PlayerFilter from "@components/filters/PlayerFilter.vue";
 import type { FilterParams } from "@api/apiClient.ts";
+import { useFiltersStore } from "@library/store.ts";
+
+export type FilterableChartType = 'totalPoints' | 'production' | 'shootingEfficiency' | 'perGameConsistency';
 
 const props = defineProps<{
   loading: boolean;
   plot: any;
   showFilters: boolean;
+  chartType?: FilterableChartType | undefined;
   onChange?: (props: FilterParams) => void,
   additionalStyle?: Element;
 }>();
 
+const filtersStore = useFiltersStore();
 const chartContainer = ref();
-const params = ref()
 
-const handleSeasonChange = (season: number | null) => {
-  if (props.onChange) {
-    params.value = {...params.value, season };
-    props.onChange(params.value);
-  }
-}
-
-const handlePlayerChange = (players: string | null) => {
-  if (props.onChange) {
-    params.value = {...params.value, players };
-    props.onChange(params.value);
-  }
+const handleFiltersChange = (updatedFilters: FilterParams) => {
+  props.onChange?.(updatedFilters);
 }
 
 const updateChart = () => {
@@ -48,6 +42,13 @@ watch(() => props.plot, (newPlot) => {
     updateChart();
   }
 }, { immediate: true });
+
+onMounted(() => {
+  if (props.chartType && props.onChange) {
+    const storedFilters = filtersStore.getFilters(props.chartType);
+    props.onChange(storedFilters);
+  }
+});
 </script>
 
 <template>
@@ -57,9 +58,15 @@ watch(() => props.plot, (newPlot) => {
         <LoadingCircle v-if="loading" />
         <div ref="chartContainer" class="chart" />
       </div>
-      <div v-show="showFilters" class="filters-container">
-        <SeasonFilter :onChange="handleSeasonChange" />
-        <PlayerFilter :onChange="handlePlayerChange" />
+      <div v-if="showFilters && !!chartType" class="filters-container">
+        <SeasonFilter
+            :onChange="handleFiltersChange"
+            :chartType="chartType"
+        />
+        <PlayerFilter
+            :onChange="handleFiltersChange"
+            :chartType="chartType"
+        />
       </div>
     </div>
   </div>

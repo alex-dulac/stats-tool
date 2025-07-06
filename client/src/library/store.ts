@@ -1,9 +1,15 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import apiClient from "@api/apiClient.ts";
+import apiClient, { type FilterParams } from "@api/apiClient.ts";
+import type { FilterableChartType } from "@components/BaseChart.vue";
 
 interface PlayersResponse {
 	data: string[];
+}
+
+export const initialFilters: FilterParams = {
+	season: 2025,
+	players: null
 }
 
 export const initialSettings = {
@@ -57,7 +63,7 @@ export const usePlayersStore = defineStore('players', () => {
 		const response = await apiClient.getPlayers();
 
 		if (response.data) {
-			const responseData = response.data as unknown as PlayersResponse;
+			const responseData = response.data as PlayersResponse;
 			players.value = Array.isArray(responseData.data) ? responseData.data : [];
 			isLoaded.value = true;
 		}
@@ -77,4 +83,42 @@ export const usePlayersStore = defineStore('players', () => {
 		clearCache
 	};
 });
+
+export const useFiltersStore = defineStore('filters', {
+	state: () => ({
+		filters: {
+			totalPoints: initialFilters,
+			production: initialFilters,
+			shootingEfficiency: initialFilters,
+			perGameConsistency: initialFilters
+		}
+	}),
+
+	actions: {
+		// This could be managed in other various ways as well
+		setFilters(chart: FilterableChartType, filterParams: FilterParams) {
+            this.filters[chart] = filterParams;
+        },
+
+		getFilters(chart: FilterableChartType): FilterParams {
+			return this.filters[chart] || initialFilters;
+		},
+
+		clearFilters() {
+			this.filters = {
+				totalPoints: initialFilters,
+                production: initialFilters,
+                shootingEfficiency: initialFilters,
+                perGameConsistency: initialFilters
+			}
+		}
+	},
+
+	getters: {
+		getTotalPointsFilters: (state) => state.filters.totalPoints || {},
+		getProductionFilters: (state) => state.filters.production || {},
+		getShootingEfficiencyFilters: (state) => state.filters.shootingEfficiency || {},
+		getPerGameConsistencyFilters: (state) => state.filters.perGameConsistency || {}
+	}
+})
 

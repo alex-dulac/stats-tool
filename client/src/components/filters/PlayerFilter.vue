@@ -1,19 +1,25 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
-import { usePlayersStore } from "@library/store.ts";
+import { useFiltersStore, usePlayersStore } from "@library/store.ts";
+import type { FilterableChartType } from "@components/BaseChart.vue";
+import type { FilterParams } from "@api/apiClient.ts";
 
 const props = defineProps<{
-  onChange: (players: string | null) => void
+  onChange: (updatedFilters: FilterParams) => void;
+  chartType: FilterableChartType;
 }>();
 
+const filtersStore = useFiltersStore();
 const playersStore = usePlayersStore();
 const selectedPlayers = ref<string[]>([]);
-
 const allPlayers = computed(() => playersStore.players);
 
 const handlePlayerChange = () => {
-  const playersToSend = selectedPlayers.value.length > 0 ? selectedPlayers.value.join('|') : null;
-  props.onChange(playersToSend);
+  const updatedValue = selectedPlayers.value.length > 0 ? selectedPlayers.value.join('|') : null;
+  const currentFilters = filtersStore.getFilters(props.chartType);
+  const updatedFilters = { ...currentFilters, players: updatedValue };
+  filtersStore.setFilters(props.chartType, updatedFilters);
+  props.onChange(updatedFilters);
 }
 
 const clearAll = () => {
@@ -37,6 +43,10 @@ const togglePlayerSelection = (player: string) => {
 
 onMounted(async () => {
   await playersStore.fetchPlayers();
+  const currentSelectedPlayers = filtersStore.getFilters(props.chartType).players;
+  if (currentSelectedPlayers) {
+    selectedPlayers.value = currentSelectedPlayers.split('|');
+  }
 });
 </script>
 
