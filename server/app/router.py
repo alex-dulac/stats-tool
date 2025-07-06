@@ -1,3 +1,5 @@
+from typing import Optional, List
+
 from fastapi import APIRouter, Depends
 
 from app.models import stat_to_extended_model
@@ -5,9 +7,14 @@ from app.service import StatsService
 
 router = APIRouter()
 
+def parse_players(players: str = None) -> Optional[List[str]]:
+    return players.split('|') if players else None
+
+
 @router.get('/')
 async def health():
     return {"status": "ok"}
+
 
 @router.get('/stats')
 async def stats(stats_service: StatsService = Depends()):
@@ -20,10 +27,12 @@ async def stats(stats_service: StatsService = Depends()):
 
     return {"data": response}
 
+
 @router.get('/players')
 async def stats(stats_service: StatsService = Depends()):
     data = await stats_service.get_players()
     return {"data": data}
+
 
 @router.get('/stats/{player_name}')
 async def stats(player_name: str, stats_service: StatsService = Depends()):
@@ -36,25 +45,50 @@ async def stats(player_name: str, stats_service: StatsService = Depends()):
 
     return {"data": response}
 
+
 @router.get('/charts/total-points')
-async def total_points_chart(season: int = None, stats_service: StatsService = Depends()):
-    data = await stats_service.get_goals_assists_chart_data(season)
+async def total_points_chart(
+        season: int = None,
+        players: str = None,
+        stats_service: StatsService = Depends()
+):
+    player_list = parse_players(players)
+    data = await stats_service.get_goals_assists_chart_data(season, player_list)
     return {"data": data}
+
 
 @router.get('/charts/production')
-async def production_chart(season: int = None, stats_service: StatsService = Depends()):
-    data = await stats_service.get_production_chart_data(season)
+async def production_chart(
+        season: int = None,
+        players: str = None,
+        stats_service: StatsService = Depends()
+):
+    player_list = parse_players(players)
+    data = await stats_service.get_production_chart_data(season, player_list)
     return {"data": data}
+
 
 @router.get('/charts/shooting-efficiency')
-async def shooting_efficiency(season: int = None, stats_service: StatsService = Depends()):
-    data = await stats_service.get_shooting_efficiency_chart_data(season)
+async def shooting_efficiency(
+        season: int = None,
+        players: str = None,
+        stats_service: StatsService = Depends()
+):
+    player_list = parse_players(players)
+    data = await stats_service.get_shooting_efficiency_chart_data(season, player_list)
     return {"data": data}
 
+
 @router.get('/charts/per-game-consistency')
-async def shooting_efficiency(season: int = None, stats_service: StatsService = Depends()):
-    data = await stats_service.get_per_game_consistency_chart_data(season)
+async def shooting_efficiency(
+        season: int = None,
+        players: str = None,
+        stats_service: StatsService = Depends()
+):
+    player_list = parse_players(players)
+    data = await stats_service.get_per_game_consistency_chart_data(season, player_list)
     return {"data": data}
+
 
 @router.get('/charts/scouting-heatmap')
 async def scouting_heatmap(stats_service: StatsService = Depends()):

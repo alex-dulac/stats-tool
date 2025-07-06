@@ -8,7 +8,6 @@ import { createPinia } from "pinia";
 import { aliases, mdi } from 'vuetify/iconsets/mdi';
 import '@mdi/font/css/materialdesignicons.css'
 import { router } from "./library/router.ts";
-import './styles.css';
 
 const vuetify = createVuetify({
 	components,

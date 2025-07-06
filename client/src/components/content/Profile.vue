@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useSessionStore } from "@library/store.ts";
+import { useSettingsStore } from "@library/store.ts";
 import { onMounted, ref } from "vue";
 
-const sessionStore = useSessionStore();
+const settingsStore = useSettingsStore();
 
-const userName = ref(sessionStore.getName);
-const userTheme = ref(sessionStore.getTheme);
+const userName = ref(settingsStore.getName);
+const userTheme = ref(settingsStore.getTheme);
 const showSuccess = ref(false);
 
 const saveProfile = async () => {
-  sessionStore.setSessionAttributes(userName.value, userTheme.value);
+  settingsStore.setSettingsAttributes(userName.value, userTheme.value);
   showSuccess.value = true;
   setTimeout(() => {
     showSuccess.value = false;
@@ -17,8 +17,8 @@ const saveProfile = async () => {
 };
 
 onMounted(() => {
-  userName.value = sessionStore.getName;
-  userTheme.value = sessionStore.getTheme;
+  userName.value = settingsStore.getName;
+  userTheme.value = settingsStore.getTheme;
 })
 </script>
 

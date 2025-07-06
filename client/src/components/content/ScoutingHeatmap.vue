@@ -4,23 +4,19 @@
 import { computed, onMounted, ref } from "vue";
 import * as Plot from "@observablehq/plot";
 import apiClient from "@api/apiClient.ts";
-import { useSessionStore } from "@library/store.ts";
-import LoadingCircle from "@components/LoadingCircle.vue";
+import { useSettingsStore } from "@library/store.ts";
 import { seasons } from "@library/utils.ts";
+import BaseChart from "@components/BaseChart.vue";
 
-const sessionStore = useSessionStore();
+const settingsStore = useSettingsStore();
 const data = ref();
-const chartContainer = ref();
 const loading = ref(true);
+const plot = ref();
 
 const items = computed(() => data.value?.data || []);
 
-const fetchDataAndRefreshPlot = async () => {
-  loading.value = true
-  const response = await apiClient.getScoutingHeatmap();
-  data.value = response.data;
-
-  const plot = Plot.plot({
+const createPlot = () => {
+  plot.value = Plot.plot({
     // There is probably a better way to display this data in a more meaningful way to the user,
     // But this seems like an okay starting point for now
     width: 900,
@@ -50,31 +46,38 @@ const fetchDataAndRefreshPlot = async () => {
         y: "scoutingGrade",
         fill: "averagePoints",
         r: 8,
-        stroke: sessionStore.getTheme === 'dark' ? "#666" : "#ccc",
+        stroke: settingsStore.getTheme === 'dark' ? "#666" : "#ccc",
         strokeWidth: 0.5,
         title: d => `Season: ${d.season}\nScouting Grade: ${d.scoutingGrade}\nAvg Points: ${d.averagePoints}`,
         tip: {
-          fill: sessionStore.getTheme === 'dark' ? "#333" : "#fff",
-          textColor: sessionStore.getTheme === 'dark' ? "#fff" : "#000"
+          fill: settingsStore.getChartTipFill,
+          textColor: settingsStore.getChartTipTextColor
         }
       }),
       Plot.frame()
     ]
   });
+}
 
-  chartContainer.value.innerHTML = '';
-  chartContainer.value.appendChild(plot);
+const fetchData = async () => {
+  loading.value = true
+  const response = await apiClient.getScoutingHeatmap();
+  if (response.data) {
+    data.value = response.data;
+  }
+  createPlot();
   loading.value = false;
 }
 
 onMounted(() => {
-  fetchDataAndRefreshPlot();
+  fetchData();
 })
 </script>
 
 <template>
-  <div class="chart-container">
-    <LoadingCircle v-if="loading" />
-    <div ref="chartContainer" class="chart" />
-  </div>
+  <BaseChart
+      :loading="loading"
+      :plot="plot"
+      :showFilters="false"
+  />
 </template>

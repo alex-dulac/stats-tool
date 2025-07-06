@@ -1,29 +1,18 @@
 <script setup lang="ts">
-import {computed, ref} from "vue";
-import apiClient from "@api/apiClient.ts";
+import {computed, ref, watch} from "vue";
+import apiClient, { type FilterParams } from "@api/apiClient.ts";
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
-import { useSessionStore } from "@library/store.ts";
-import SeasonFilter from "@components/content/SeasonFilter.vue";
-import LoadingCircle from "@components/LoadingCircle.vue";
+import { useSettingsStore } from "@library/store.ts";
+import BaseChart from "@components/BaseChart.vue";
 
-const sessionStore = useSessionStore();
+const settingsStore = useSettingsStore();
 const data = ref();
 const loading = ref(true);
-const chartContainer = ref();
 const items = computed(() => data.value?.data || []);
+const plot = ref();
 
-const fetchDataAndRefreshPlot = async (season: number) => {
-  loading.value = true;
-
-  const response = await apiClient.getPerGameConsistency(season);
-  data.value = response.data;
-  refreshRadarChart();
-
-  loading.value = false;
-};
-
-const refreshRadarChart = () => {
+const createPlot = () => {
   // example as a guide: https://observablehq.com/@observablehq/plot-radar-chart
   // rather complex --- improve me!
   const metrics = ["goalsPerGame", "assistsPerGame", "shotsPerGame", "toiPerGame"];
@@ -37,6 +26,7 @@ const refreshRadarChart = () => {
       metrics.map(metric => ({
         name: player.playerName,
         team: player.team,
+        season: player.season,
         key: metric,
         value: (player[metric] || 0) / maxValues[metric], // Normalize to 0-1
         rawValue: player[metric] || 0
@@ -53,10 +43,10 @@ const refreshRadarChart = () => {
           .replace(/^./, str => str.toUpperCase())
           .replace('Per Game', '/Game');
 
-  const plot = Plot.plot({
+  plot.value = Plot.plot({
     width: 1000,
     height: 1000,
-    margin: 50,
+    margin: 20,
     projection: {
       type: "azimuthal-equidistant",
       rotate: [0, -90],
@@ -66,8 +56,8 @@ const refreshRadarChart = () => {
       // grey discs
       Plot.geo([1.0, 0.8, 0.6, 0.4, 0.2], {
         geometry: (r) => d3.geoCircle().center([0, 90]).radius(r)(),
-        stroke: sessionStore.getTheme === 'dark' ? "#555" : "#ddd",
-        fill: sessionStore.getTheme === 'dark' ? "#333" : "#f8f8f8",
+        stroke: settingsStore.getTheme === 'dark' ? "#555" : "#ddd",
+        fill: settingsStore.getTheme === 'dark' ? "#333" : "#f8f8f8",
         strokeOpacity: 0.5,
         fillOpacity: 0.05,
         strokeWidth: 1
@@ -79,7 +69,7 @@ const refreshRadarChart = () => {
         y1: 90 - 1.07,
         x2: 0,
         y2: 90,
-        stroke: sessionStore.getTheme === 'dark' ? "#666" : "#ccc",
+        stroke: settingsStore.getTheme === 'dark' ? "#666" : "#ccc",
         strokeOpacity: 0.7,
         strokeWidth: 1.5
       }),
@@ -91,8 +81,8 @@ const refreshRadarChart = () => {
         dx: 4,
         textAnchor: "start",
         text: (d) => `${Math.round(100 * d)}%`,
-        fill: sessionStore.getTheme === 'dark' ? "#888" : "#666",
-        stroke: sessionStore.getTheme === 'dark' ? "#000" : "#fff",
+        fill: settingsStore.getTheme === 'dark' ? "#888" : "#666",
+        stroke: settingsStore.getTheme === 'dark' ? "#000" : "#fff",
         strokeWidth: 2,
         fontSize: 10
       }),
@@ -102,8 +92,8 @@ const refreshRadarChart = () => {
         x: longitude,
         y: 90 - 1.07,
         text: formatMetricName,
-        fill: sessionStore.getTheme === 'dark' ? "#fff" : "#000",
-        stroke: sessionStore.getTheme === 'dark' ? "#000" : "#fff",
+        fill: settingsStore.getTheme === 'dark' ? "#fff" : "#000",
+        stroke: settingsStore.getTheme === 'dark' ? "#000" : "#fff",
         strokeWidth: 2,
         fontSize: 12,
         fontWeight: "bold",
@@ -130,25 +120,24 @@ const refreshRadarChart = () => {
         x: ({ key }) => longitude(key),
         y: ({ value }) => 90 - value,
         fill: "name",
-        stroke: sessionStore.getTheme === 'dark' ? "#000" : "#fff",
+        stroke: settingsStore.getTheme === 'dark' ? "#000" : "#fff",
         strokeWidth: 2,
         r: 4,
-        title: (d) => `${d.name} (${d.team})\n${formatMetricName(d.key)}: ${d.rawValue.toFixed(2)}`,
+        title: (d) => `${d.name} (${d.team})\nSeason: ${d.season}\n${formatMetricName(d.key)}: ${d.rawValue.toFixed(2)}`,
         tip: {
-          fill: sessionStore.getTheme === 'dark' ? "#333" : "#fff",
-          textColor: sessionStore.getTheme === 'dark' ? "#fff" : "#000"
+          fill: settingsStore.getTheme === 'dark' ? "#333" : "#fff",
+          textColor: settingsStore.getTheme === 'dark' ? "#fff" : "#000"
         }
       }),
     ]
   });
+};
 
-  chartContainer.value.innerHTML = '';
-  chartContainer.value.appendChild(plot);
-
+const getHoverStyle = () => {
   // Hover fills being handled a little differently than the linked example
-  const fillOpacity = sessionStore.getTheme === 'dark' ? '0.1' : '0.15';
-  const hoverOpacity = sessionStore.getTheme === 'dark' ? '0.25' : '0.3';
-  const fadeOpacity = sessionStore.getTheme === 'dark' ? '0.05' : '0.08';
+  const fillOpacity = settingsStore.getTheme === 'dark' ? '0.1' : '0.15';
+  const hoverOpacity = settingsStore.getTheme === 'dark' ? '0.25' : '0.3';
+  const fadeOpacity = settingsStore.getTheme === 'dark' ? '0.05' : '0.08';
 
   const style = document.createElement('style');
   style.textContent = `
@@ -166,19 +155,31 @@ const refreshRadarChart = () => {
     }
   `;
 
-  const existingStyle = chartContainer.value.querySelector('style');
-  if (existingStyle) {
-    existingStyle.remove();
-  }
+  return style;
+}
 
-  chartContainer.value.appendChild(style);
+const fetchData = async (params: FilterParams) => {
+  loading.value = true;
+  const response = await apiClient.getPerGameConsistency(params);
+  if (response.data) {
+    data.value = response.data;
+  }
+  loading.value = false;
 };
+
+watch(items, () => {
+  if (items.value) {
+    createPlot();
+  }
+}, { immediate: true });
 </script>
 
 <template>
-  <div class="chart-container">
-    <SeasonFilter :onChange="fetchDataAndRefreshPlot" />
-    <LoadingCircle v-if="loading" />
-    <div ref="chartContainer" class="chart" />
-  </div>
+  <BaseChart
+      :loading="loading"
+      :onChange="fetchData"
+      :plot="plot"
+      :showFilters="true"
+      :additionalStyle="getHoverStyle()"
+  />
 </template>

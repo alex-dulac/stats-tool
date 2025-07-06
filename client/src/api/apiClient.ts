@@ -1,6 +1,11 @@
 import axios, { type AxiosResponse } from "axios";
 import { mapKeysToCamelCase } from "@library/utils.ts";
 
+export interface FilterParams {
+	season: number | null;
+	players: string[];
+}
+
 interface Response<T> {
 	data: T | null;
 	error: string | null;
@@ -35,28 +40,31 @@ async function handleApiResponse<T>(apiCall: Promise<AxiosResponse>): Promise<Re
 	}
 }
 
+function getRequestConfig(params: any) {
+	return Object.keys(params).length > 0 ? { params } : undefined;
+}
+
 export default {
 	getStats: async () => {
 		return handleApiResponse(apiClient.get('/stats'));
 	},
+	getPlayers: async () => {
+		return handleApiResponse(apiClient.get('/players'));
+	},
 	getStatsByPlayerName: async (playerName: string) => {
 		return handleApiResponse(apiClient.get(`/stats/${playerName}`));
 	},
-	getTotalPoints: async (season: number | null = null) => {
-		const config = season ? { params: { season } } : undefined;
-		return handleApiResponse(apiClient.get('/charts/total-points', config));
+	getTotalPoints: async (params: FilterParams) => {
+		return handleApiResponse(apiClient.get('/charts/total-points', getRequestConfig(params)));
 	},
-	getProduction: async (season: number | null = null) => {
-		const config = season ? { params: { season } } : undefined;
-		return handleApiResponse(apiClient.get('/charts/production', config));
+	getProduction: async (params: FilterParams) => {
+		return handleApiResponse(apiClient.get('/charts/production', getRequestConfig(params)));
 	},
-	getShootingEfficiency: async (season: number | null = null) => {
-		const config = season ? { params: { season } } : undefined;
-		return handleApiResponse(apiClient.get('/charts/shooting-efficiency', config));
+	getShootingEfficiency: async (params: FilterParams) => {
+		return handleApiResponse(apiClient.get('/charts/shooting-efficiency', getRequestConfig(params)));
 	},
-	getPerGameConsistency: async (season: number | null = null) => {
-		const config = season ? { params: { season } } : undefined;
-		return handleApiResponse(apiClient.get('/charts/per-game-consistency', config));
+	getPerGameConsistency: async (params: FilterParams) => {
+		return handleApiResponse(apiClient.get('/charts/per-game-consistency', getRequestConfig(params)));
 	},
 	getScoutingHeatmap: async () => {
 		return handleApiResponse(apiClient.get('/charts/scouting-heatmap'));

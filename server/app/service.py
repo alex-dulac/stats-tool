@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import Depends
 from sqlalchemy import func
 from sqlmodel import select, distinct
@@ -6,6 +8,15 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.db import get_db
 from app.models import Stats
 
+
+def build_query(fields, season: int = None, player_list: List[str] = None) -> select:
+    query = select(*fields)
+    if season:
+        query = query.where(Stats.season == season)
+    if player_list:
+        query = query.where(Stats.player_name.in_(player_list))
+
+    return query
 
 class BaseService:
     def __init__(self, db: AsyncSession = Depends(get_db)):
@@ -23,7 +34,7 @@ class StatsService(BaseService):
 
     async def get_players(self):
         # Returns a list of distinct player names from the 'Stats' table
-        query = select(distinct(Stats.player_name))
+        query = select(distinct(Stats.player_name)).order_by(Stats.player_name)
         result = await self.db.exec(query)
         return result.all()
 
@@ -32,7 +43,7 @@ class StatsService(BaseService):
         result = await self.db.exec(query)
         return result.all()
 
-    async def get_goals_assists_chart_data(self, season: int = None):
+    async def get_goals_assists_chart_data(self, season: int = None, player_list: List[str] = None):
         fields = [
             Stats.player_name,
             Stats.team,
@@ -42,10 +53,7 @@ class StatsService(BaseService):
             Stats.points,
         ]
 
-        query = select(*fields)
-        if season:
-            query = query.where(Stats.season == season)
-
+        query = build_query(fields, season, player_list)
         result = await self.db.exec(query.order_by(Stats.points.desc()))
 
         data = [
@@ -62,7 +70,7 @@ class StatsService(BaseService):
 
         return data
 
-    async def get_production_chart_data(self, season: int = None):
+    async def get_production_chart_data(self, season: int = None, player_list: List[str] = None):
         toi_per_game = (Stats.toi / Stats.gp).label("toi_per_game")
         points_per_game = (Stats.points / Stats.gp).label("points_per_game")
 
@@ -74,10 +82,7 @@ class StatsService(BaseService):
             points_per_game
         ]
 
-        query = select(*fields)
-        if season:
-            query = query.where(Stats.season == season)
-
+        query = build_query(fields, season, player_list)
         query = query.where(Stats.gp > 0)
         result = await self.db.exec(query.order_by(points_per_game.desc()))
 
@@ -94,7 +99,7 @@ class StatsService(BaseService):
 
         return data
 
-    async def get_shooting_efficiency_chart_data(self, season: int = None):
+    async def get_shooting_efficiency_chart_data(self, season: int = None, player_list: List[str] = None):
         shooting_efficiency = (Stats.goals / Stats.shots).label("shooting_efficiency")
 
         fields = [
@@ -106,10 +111,7 @@ class StatsService(BaseService):
             shooting_efficiency
         ]
 
-        query = select(*fields)
-        if season:
-            query = query.where(Stats.season == season)
-
+        query = build_query(fields, season, player_list)
         query = query.where(Stats.shots > 0)
         result = await self.db.exec(query.order_by(shooting_efficiency.desc()))
 
@@ -127,7 +129,7 @@ class StatsService(BaseService):
 
         return data
 
-    async def get_per_game_consistency_chart_data(self, season: int = None):
+    async def get_per_game_consistency_chart_data(self, season: int = None, player_list: List[str] = None):
         goals_per_game = (Stats.goals / Stats.gp).label("goals_per_game")
         assists_per_game = (Stats.assists / Stats.gp).label("assists_per_game")
         shots_per_game = (Stats.shots / Stats.gp).label("shots_per_game")
@@ -143,10 +145,7 @@ class StatsService(BaseService):
             toi_per_game,
         ]
 
-        query = select(*fields)
-        if season:
-            query = query.where(Stats.season == season)
-
+        query = build_query(fields, season, player_list)
         result = await self.db.exec(query)
 
         data = [

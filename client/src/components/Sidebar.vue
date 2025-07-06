@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { mainNavItems, profile } from "@library/navItems.ts";
-import { initialSession, useSessionStore } from "@library/store.ts";
+import { initialSettings, useSettingsStore } from "@library/store.ts";
 
 const router = useRouter();
-const sessionStore = useSessionStore();
+const settingsStore = useSettingsStore();
 
 const handleLogout = () => {
   // simulate a logout by just clearing the session data
-  sessionStore.setSessionAttributes(initialSession.name, initialSession.theme);
+  settingsStore.setSettingsAttributes(initialSettings.name, initialSettings.theme);
 };
 
 const handleItemClick = (route: string) => {

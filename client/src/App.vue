@@ -2,11 +2,11 @@
 import AppBar from "./components/AppBar.vue";
 import Sidebar from "./components/Sidebar.vue";
 import MainContent from "./components/MainContent.vue";
-import {useSessionStore} from "@library/store.ts";
-import {useTheme} from "vuetify/framework";
-import {onMounted, watch} from "vue";
+import { useSettingsStore } from "@library/store.ts";
+import { useTheme } from "vuetify/framework";
+import { onMounted, watch } from "vue";
 
-const session = useSessionStore();
+const session = useSettingsStore();
 const theme = useTheme();
 
 onMounted(() => {

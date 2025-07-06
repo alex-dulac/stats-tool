@@ -3,8 +3,8 @@ import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <v-main class="align-center justify-center">
-    <v-container>
+  <v-main>
+    <v-container fluid class="ma-0 pa-0">
       <RouterView />
     </v-container>
   </v-main>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useSessionStore } from "@library/store.ts";
+import { useSettingsStore } from "@library/store.ts";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { mainNavItems } from "@library/navItems.ts";
 
 const route = useRoute();
-const session = useSessionStore();
+const session = useSettingsStore();
 
 const welcome = computed(() => {
   return session.getName ? `Welcome, ${session.getName}` : "Welcome"
