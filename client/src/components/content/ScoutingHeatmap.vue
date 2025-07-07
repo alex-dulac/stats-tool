@@ -21,7 +21,6 @@ const createPlot = () => {
     // But this seems like an okay starting point for now
     width: 900,
     height: 900,
-    margin: 60,
     x: {
       label: "Season",
       tickFormat: "d",

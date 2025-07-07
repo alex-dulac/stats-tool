@@ -24,22 +24,18 @@ const handleFiltersChange = (updatedFilters: FilterParams) => {
   props.onChange?.(updatedFilters);
 }
 
-const updateChart = () => {
-  if (chartContainer.value && props.plot) {
-    chartContainer.value.innerHTML = '';
-    chartContainer.value.appendChild(props.plot);
-
-    if (props.additionalStyle) {
-      const existingStyle = chartContainer.value.querySelector('style');
-      existingStyle?.remove();
-      chartContainer.value.appendChild(props.additionalStyle);
-    }
-  }
-};
-
 watch(() => props.plot, (newPlot) => {
   if (newPlot) {
-    updateChart();
+    if (chartContainer.value && props.plot) {
+      chartContainer.value.innerHTML = '';
+      chartContainer.value.appendChild(props.plot);
+
+      if (props.additionalStyle) {
+        const existingStyle = chartContainer.value.querySelector('style');
+        existingStyle?.remove();
+        chartContainer.value.appendChild(props.additionalStyle);
+      }
+    }
   }
 }, { immediate: true });
 
@@ -52,43 +48,41 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="chart-container">
-    <div class="content-layout" :class="{ 'no-filters': !showFilters }">
-      <div class="chart-area">
-        <LoadingCircle v-if="loading" />
-        <div ref="chartContainer" class="chart" />
-      </div>
-      <div v-if="showFilters && !!chartType" class="filters-container">
-        <SeasonFilter
-            :onChange="handleFiltersChange"
-            :chartType="chartType"
-        />
-        <PlayerFilter
-            :onChange="handleFiltersChange"
-            :chartType="chartType"
-        />
-      </div>
+  <!-- Layout with filters -->
+  <div v-if="showFilters && chartType" class="chart-container-with-filters">
+    <div class="chart-area">
+      <LoadingCircle v-if="loading" />
+      <div ref="chartContainer" class="chart" />
+    </div>
+
+    <aside class="filters-sidebar">
+      <SeasonFilter
+          :onChange="handleFiltersChange"
+          :chartType="chartType"
+      />
+      <PlayerFilter
+          :onChange="handleFiltersChange"
+          :chartType="chartType"
+      />
+    </aside>
+  </div>
+
+  <!-- Layout without filters (centered) -->
+  <div v-else class="chart-container-centered">
+    <div class="chart-area-centered">
+      <LoadingCircle v-if="loading" />
+      <div ref="chartContainer" class="chart" />
     </div>
   </div>
 </template>
 
 <style scoped>
-.chart-container {
-  width: 100%;
+.chart-container-with-filters {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 20px;
-}
-
-.content-layout {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
-
-.content-layout.no-filters {
-  justify-content: center;
 }
 
 .chart-area {
@@ -96,28 +90,30 @@ onMounted(() => {
   min-width: 0;
   position: relative;
   overflow: hidden;
-  max-width: 100%;
-  margin-left: 100px;
 }
 
-.no-filters .chart-area {
-  max-width: 1200px;
-}
-
-.filters-container {
+.filters-sidebar {
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 250px;
   flex-shrink: 0;
-  margin-right: 50px;
+}
+
+.chart-container-centered {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.chart-area-centered {
+  position: relative;
+  overflow: hidden;
 }
 
 .chart {
   width: 100%;
   height: 100%;
   overflow: auto;
-  padding: 0;
-  margin: 0;
 }
 </style>

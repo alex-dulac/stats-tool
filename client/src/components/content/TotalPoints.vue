@@ -40,7 +40,10 @@ const createPlot = () => {
   plot.value = Plot.plot({
     width: 1200,
     height: 800,
-    margin: 20,
+    marginBottom: 80, // more space for tick labels
+    marginLeft: 40,
+    marginRight: 40,
+    marginTop: 40,
     x: { label: "Player (Season)", tickRotate: 30 },
     y: { label: "Total Points", grid: true },
     color: { legend: true },

@@ -85,6 +85,7 @@ export const usePlayersStore = defineStore('players', () => {
 });
 
 export const useFiltersStore = defineStore('filters', {
+	// Allows the user to navigate to different charts and retain the latest filter settings for each one
 	state: () => ({
 		filters: {
 			totalPoints: initialFilters,

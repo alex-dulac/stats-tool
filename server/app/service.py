@@ -28,7 +28,7 @@ class StatsService(BaseService):
         # Query to select all rows from the 'Stats' table
         # Normally, we would want to be more methodical about this, with limits/pagination for example
         # for this demonstration, we'll use a simple select statement since we know the data
-        query = select(Stats)
+        query = select(Stats).order_by(Stats.player_name, Stats.season.desc())
         result = await self.db.exec(query)
         return result.all()
 
