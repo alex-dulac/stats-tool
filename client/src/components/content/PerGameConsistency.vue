@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, ref, watch} from "vue";
+import { computed, ref, watch } from "vue";
 import apiClient, { type FilterParams } from "@api/apiClient.ts";
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";

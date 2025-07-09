@@ -14,7 +14,7 @@ export const initialFilters: FilterParams = {
 
 export const initialSettings = {
 	name: '',
-    theme: 'light',
+	theme: 'light',
 };
 
 // in a real prod app with user authentication, we would likely use db for storing user data.
@@ -98,8 +98,8 @@ export const useFiltersStore = defineStore('filters', {
 	actions: {
 		// This could be managed in other various ways as well
 		setFilters(chart: FilterableChartType, filterParams: FilterParams) {
-            this.filters[chart] = filterParams;
-        },
+			this.filters[chart] = filterParams;
+		},
 
 		getFilters(chart: FilterableChartType): FilterParams {
 			return this.filters[chart] || initialFilters;
@@ -108,9 +108,9 @@ export const useFiltersStore = defineStore('filters', {
 		clearFilters() {
 			this.filters = {
 				totalPoints: initialFilters,
-                production: initialFilters,
-                shootingEfficiency: initialFilters,
-                perGameConsistency: initialFilters
+				production: initialFilters,
+				shootingEfficiency: initialFilters,
+				perGameConsistency: initialFilters
 			}
 		}
 	},

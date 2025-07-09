@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch} from "vue";
+import { onMounted, ref, watch } from "vue";
 import LoadingCircle from "@components/LoadingCircle.vue";
 import SeasonFilter from "@components/filters/SeasonFilter.vue";
 import PlayerFilter from "@components/filters/PlayerFilter.vue";

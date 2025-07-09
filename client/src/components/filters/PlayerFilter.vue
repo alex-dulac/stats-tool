@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useFiltersStore, usePlayersStore } from "@library/store.ts";
 import type { FilterableChartType } from "@components/BaseChart.vue";
 import type { FilterParams } from "@api/apiClient.ts";

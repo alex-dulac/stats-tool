@@ -43,40 +43,40 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
-      <LoadingCircle v-if="loading" />
+  <div>
+    <LoadingCircle v-if="loading" />
 
-      <v-text-field
-          v-else
-          v-model="search"
-          label="Search by player or team"
-          prepend-inner-icon="mdi-magnify"
-          variant="outlined"
-          hide-details
-          single-line
-      ></v-text-field>
+    <v-text-field
+        v-else
+        v-model="search"
+        label="Search by player or team"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        hide-details
+        single-line
+    ></v-text-field>
 
-      <v-data-table
-          :items="items"
-          :headers="headers"
-          :loading="loading"
-          v-model:search="search"
-          :filter-keys="['playerName', 'team']"
-          class="elevation-3"
-          fixed-header
-          multi-sort
-      >
-        <!--
-          Behind the scenes, toi is sorted by seconds,
-          but it should display as "MM:SS" in the table.
-        -->
-        <template v-slot:item.toi="{ item }">
-          {{ secondsToMinuteSeconds(item.toi) }}
-        </template>
-        <template v-slot:item.toiPerGame="{ item }">
-          {{ secondsToMinuteSeconds(item.toiPerGame) }}
-        </template>
-      </v-data-table>
-    </div>
+    <v-data-table
+        :items="items"
+        :headers="headers"
+        :loading="loading"
+        v-model:search="search"
+        :filter-keys="['playerName', 'team']"
+        class="elevation-3"
+        fixed-header
+        multi-sort
+    >
+      <!--
+        Behind the scenes, toi is sorted by seconds,
+        but it should display as "MM:SS" in the table.
+      -->
+      <template v-slot:item.toi="{ item }">
+        {{ secondsToMinuteSeconds(item.toi) }}
+      </template>
+      <template v-slot:item.toiPerGame="{ item }">
+        {{ secondsToMinuteSeconds(item.toiPerGame) }}
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
