@@ -6,7 +6,12 @@ import PlayerFilter from "@components/filters/PlayerFilter.vue";
 import type { FilterParams } from "@api/apiClient.ts";
 import { useFiltersStore } from "@library/store.ts";
 
-export type FilterableChartType = 'totalPoints' | 'production' | 'shootingEfficiency' | 'perGameConsistency';
+export type FilterableChartType =
+    'totalPoints' |
+    'production' |
+    'shootingEfficiency' |
+    'perGameConsistency' |
+    'headToHead';
 
 const props = defineProps<{
   loading: boolean;
@@ -25,16 +30,16 @@ const handleFiltersChange = (updatedFilters: FilterParams) => {
 }
 
 watch(() => props.plot, (newPlot) => {
-  if (newPlot) {
-    if (chartContainer.value && props.plot) {
-      chartContainer.value.innerHTML = '';
-      chartContainer.value.appendChild(props.plot);
+  if (chartContainer.value) {
+    chartContainer.value.innerHTML = '';
+    if (newPlot) {
+      chartContainer.value.appendChild(newPlot);
+    }
 
-      if (props.additionalStyle) {
-        const existingStyle = chartContainer.value.querySelector('style');
-        existingStyle?.remove();
-        chartContainer.value.appendChild(props.additionalStyle);
-      }
+    if (props.additionalStyle) {
+      const existingStyle = chartContainer.value.querySelector('style');
+      existingStyle?.remove();
+      chartContainer.value.appendChild(props.additionalStyle);
     }
   }
 }, { immediate: true });

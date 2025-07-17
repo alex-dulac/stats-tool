@@ -47,7 +47,7 @@ async def stats(player_name: str, stats_service: StatsService = Depends()):
 
 
 @router.get('/charts/total-points')
-async def total_points_chart(
+async def total_points(
         season: int = None,
         players: str = None,
         stats_service: StatsService = Depends()
@@ -58,7 +58,7 @@ async def total_points_chart(
 
 
 @router.get('/charts/production')
-async def production_chart(
+async def production(
         season: int = None,
         players: str = None,
         stats_service: StatsService = Depends()
@@ -80,7 +80,7 @@ async def shooting_efficiency(
 
 
 @router.get('/charts/per-game-consistency')
-async def shooting_efficiency(
+async def per_game_consistency(
         season: int = None,
         players: str = None,
         stats_service: StatsService = Depends()
@@ -93,4 +93,20 @@ async def shooting_efficiency(
 @router.get('/charts/scouting-heatmap')
 async def scouting_heatmap(stats_service: StatsService = Depends()):
     data = await stats_service.get_scouting_heatmap_chart_data()
+    return {"data": data}
+
+
+@router.get('/charts/head-to-head')
+async def head_to_head(
+        season: int = None,
+        players: str = None,
+        stats_service: StatsService = Depends()
+):
+    player_list = parse_players(players)
+
+    if player_list is None or len(player_list) != 2:
+        return {"error": "Please provide exactly two players."}
+
+    data = await stats_service.get_head_to_head_data(player_list, season)
+
     return {"data": data}

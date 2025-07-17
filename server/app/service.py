@@ -181,3 +181,90 @@ class StatsService(BaseService):
             for row in result.all()
         ]
         return data
+
+    async def get_head_to_head_data(self, player_list: List[str], season: int = None):
+        """
+        Method that retrieves data for two players and compares their stats,
+        deciding on a winner based on different criteria.
+        It is pretty simplistic and could be expanded upon in a real-world scenario with more complex criteria.
+        """
+        if len(player_list) != 2:
+            return {"error": "Exactly two players required for comparison"}
+
+        player1, player2 = player_list
+
+        query = select(Stats).where(Stats.player_name.in_([player1, player2]))
+        if season:
+            query = query.where(Stats.season == season)
+
+        result = await self.db.exec(query)
+        stats = result.all()
+
+        player1_stats = [s for s in stats if s.player_name == player1]
+        player2_stats = [s for s in stats if s.player_name == player2]
+
+        if not player1_stats or not player2_stats:
+            raise BaseException("One or both players not found for the specified criteria")
+
+        def calculate_player_stats(player_stats, player_name):
+            total_goals = sum(s.goals for s in player_stats)
+            total_assists = sum(s.assists for s in player_stats)
+            total_points = sum(s.points for s in player_stats)
+            total_games = sum(s.gp for s in player_stats)
+            total_shots = sum(s.shots for s in player_stats)
+            total_toi = sum(s.toi for s in player_stats)
+            avg_scouting_grade = sum(s.scouting_grade for s in player_stats) / len(player_stats)
+
+            return {
+                "name": player_name,
+                "seasons_included": len(player_stats),
+                "total_games": total_games,
+                "total_goals": total_goals,
+                "total_assists": total_assists,
+                "total_points": total_points,
+                "total_shots": total_shots,
+                "points_per_game": round(total_points / total_games, 2) if total_games > 0 else 0,
+                "goals_per_game": round(total_goals / total_games, 2) if total_games > 0 else 0,
+                "assists_per_game": round(total_assists / total_games, 2) if total_games > 0 else 0,
+                "shooting_percentage": round((total_goals / total_shots) * 100, 1) if total_shots > 0 else 0,
+                "avg_toi_per_game": round(total_toi / total_games, 2) if total_games > 0 else 0,
+                "avg_scouting_grade": round(avg_scouting_grade, 1)
+            }
+
+        player1_summary = calculate_player_stats(player1_stats, player1)
+        player2_summary = calculate_player_stats(player2_stats, player2)
+
+        comparisons = {
+            "total_points": {
+                "winner": player1 if player1_summary["total_points"] > player2_summary["total_points"] else player2,
+                "values": {player1: player1_summary["total_points"], player2: player2_summary["total_points"]}
+            },
+            "points_per_game": {
+                "winner": player1 if player1_summary["points_per_game"] > player2_summary["points_per_game"] else player2,
+                "values": {player1: player1_summary["points_per_game"], player2: player2_summary["points_per_game"]}
+            },
+            "shooting_percentage": {
+                "winner": player1 if player1_summary["shooting_percentage"] > player2_summary["shooting_percentage"] else player2,
+                "values": {player1: player1_summary["shooting_percentage"], player2: player2_summary["shooting_percentage"]}
+            },
+            "avg_scouting_grade": {
+                "winner": player1 if player1_summary["avg_scouting_grade"] > player2_summary["avg_scouting_grade"] else player2,
+                "values": {player1: player1_summary["avg_scouting_grade"], player2: player2_summary["avg_scouting_grade"]}
+            }
+        }
+
+        wins = {player1: 0, player2: 0}
+        for comparison in comparisons.values():
+            wins[comparison["winner"]] += 1
+
+        overall_winner = player1 if wins[player1] > wins[player2] else player2 if wins[player2] > wins[player1] else "tie"
+
+        return {
+            "player1": player1_summary,
+            "player2": player2_summary,
+            "comparisons": comparisons,
+            "overall_winner": overall_winner,
+            "win_count": wins,
+            "season_filter": season
+        }
+

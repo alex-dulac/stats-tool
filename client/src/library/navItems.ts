@@ -49,6 +49,13 @@ export const dataTable: NavItem = {
 	description: 'A table of player statistics by season.'
 };
 
+export const headToHead: NavItem = {
+	route: 'head-to-head',
+	displayName: 'Head To Head',
+	icon: 'mdi-fencing',
+	description: 'Analyze two players against each other.'
+};
+
 export const profile: NavItem = {
 	route: 'profile',
 	displayName: 'Profile',
@@ -63,5 +70,6 @@ export const mainNavItems = ref<NavItem[]>([
 	shootingEfficiency,
 	perGameConsistency,
 	scoutingHeatmap,
+	headToHead,
 ]);
 

@@ -39,6 +39,11 @@ const routes = [
 		component: () => import('@components/content/ScoutingHeatmap.vue'),
 	},
 	{
+		path: '/head-to-head',
+		name: 'head-to-head',
+		component: () => import('@components/content/HeadToHead.vue'),
+	},
+	{
 		path: '/profile',
 		name: 'profile',
 		component: () => import('@components/content/Profile.vue'),

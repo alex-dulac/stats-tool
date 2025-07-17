@@ -69,4 +69,7 @@ export default {
 	getScoutingHeatmap: async () => {
 		return handleApiResponse(apiClient.get('/charts/scouting-heatmap'));
 	},
+	getHeadToHead: async (params: FilterParams) => {
+		return handleApiResponse(apiClient.get('/charts/head-to-head', getRequestConfig(params)));
+	},
 };
