@@ -47,7 +47,7 @@ const chartDescription = computed(() => {
       <v-row class="mr-2 align-center">
         <h4 class="mr-2">{{ welcome }}</h4>
         <v-img
-            :src="'/logo.svg'"
+            :src="'/logo.png'"
             height="40"
             width="40"
             class="mr-2"
